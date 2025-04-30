@@ -622,6 +622,7 @@ require('lazy').setup({
   { import = 'custom.plugins/conform' },
   { import = 'custom.plugins/mason-tool-installer' },
   { import = 'custom.plugins/indent-blankline' },
+  { import = 'custom.plugins/vim-tmux-navigator'},
   --
   -- For additional information with loading, sourcing and examples see `:help lazy.nvim-🔌-plugin-spec`
   -- Or use telescope!
