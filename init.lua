@@ -6,7 +6,7 @@
 ========                                    .-----.          ========
 ========         .----------------------.   | === |          ========
 ========         |.-""""""""""""""""""-.|   |-----|          ========
-========         ||                    ||   | === |          ========
+
 ========         ||   KICKSTART.NVIM   ||   |-----|          ========
 ========         ||                    ||   | === |          ========
 ========         ||                    ||   |-----|          ========
@@ -516,8 +516,8 @@ require('lazy').setup({
         overrides = function(colors) -- add/modify highlights
           return {}
         end,
-        theme = "wave",    -- Load "wave" theme
-        background = {     -- map the value of 'background' option to a theme
+        theme = "wave",  -- Load "wave" theme
+        background = {   -- map the value of 'background' option to a theme
           dark = "wave", -- try "dragon" !
           light = "lotus"
         },
@@ -529,7 +529,7 @@ require('lazy').setup({
 
 
   -- Highlight todo, notes, etc in comments
-  { 'folke/todo-comments.nvim',                    event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
+  { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
@@ -615,13 +615,17 @@ require('lazy').setup({
   --
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
   --
-  { import = 'custom.plugins/lspconfig' },
-  { import = 'custom.plugins/vimtex' },
-  { import = 'custom.plugins/blink' },
-  { import = 'custom.plugins/mason' },
-  { import = 'custom.plugins/conform' },
-  { import = 'custom.plugins/mason-tool-installer' },
-  { import = 'custom.plugins/indent-blankline' },
+  -- { import = 'custom.plugins/lspconfig' },
+  -- { import = 'custom.plugins/vimtex' },
+  -- { import = 'custom.plugins/blink' },
+  -- { import = 'custom.plugins/mason' },
+  -- { import = 'custom.plugins/conform' },
+  -- { import = 'custom.plugins/mason-tool-installer' },
+  -- { import = 'custom.plugins/indent-blankline' },
+  -- { import = 'custom.plugins/copilot' },
+  -- import the whole `custom.plugins` directory
+  { import = 'custom.plugins' },
+
   --
   -- For additional information with loading, sourcing and examples see `:help lazy.nvim-🔌-plugin-spec`
   -- Or use telescope!
