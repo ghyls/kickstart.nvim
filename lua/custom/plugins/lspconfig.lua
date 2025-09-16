@@ -12,7 +12,7 @@ return {
       local lspconfig = require("lspconfig")
 
       lspconfig.clangd.setup({
-        cmd = { "/usr/bin/clangd" },
+        cmd = { "/cmsnfshome0/nfshome0/mariogo/scripts/clang-cmssw-wrapper.sh" },
         on_attach = function(client, bufnr)
           print("Clangd attached to buffer " .. bufnr)
         end,
