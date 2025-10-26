@@ -9,18 +9,31 @@ return {
       { 'j-hui/fidget.nvim',       opts = {} },
     },
     config = function()
-      local lspconfig = require("lspconfig")
+      -- local lspconfig = ("lspconfig")
 
-      lspconfig.clangd.setup({
+
+
+      vim.lsp.config.clangd = {
         cmd = { "/cmsnfshome0/nfshome0/mariogo/scripts/clang-cmssw-wrapper.sh" },
+        root_markers = { '.clangd', '.clang-tidy', '.clang-format', 'compile_commands.json', 'compile_flags.txt', 'configure.ac', '.git' },
         on_attach = function(client, bufnr)
           print("Clangd attached to buffer " .. bufnr)
         end,
-      })
+      }
+
+      vim.lsp.enable('clangd')
+
 
       -- blink
       local capabilities = require('blink.cmp').get_lsp_capabilities()
-      require('lspconfig').lua_ls.setup { capabilities = capabilities }
+
+      vim.lsp.config.lua_ls = {
+        cmd = { 'lua-language-server' },
+        root_markers = { '.luarc.json', '.luarc.jsonc', '.luacheckrc', '.stylua.toml', 'stylua.toml', 'selene.toml', 'selene.yml', '.git' },
+        capabilities = capabilities,
+      }
+
+      vim.lsp.enable('lua_ls')
 
 
 

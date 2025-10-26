@@ -116,7 +116,23 @@ vim.opt.showmode = false
 
 
 vim.g.clipboard = 'osc52'
-vim.opt.clipboard = 'unnamedplus'
+-- vim.g.clipboard = {
+--   name = 'OSC 52',
+--   copy = {
+--     ['+'] = require('vim.ui.clipboard.osc52').copy('+'),
+--     ['*'] = require('vim.ui.clipboard.osc52').copy('*'),
+--   },
+--   paste = {
+--     ['+'] = function () end,
+--     ['*'] = function () end,
+--   },
+-- }
+-- vim.opt.clipboard = 'unnamedplus'
+
+vim.keymap.set({'n', 'v'}, '<leader>y', '"+y', { desc = 'Yank to system clipboard' })
+-- vim.keymap.set({'n', 'v'}, '<leader>p', '"+p', { desc = 'Paste from system clipboard' })
+-- vim.keymap.set({'n', 'v'}, '<leader>P', '"+P', { desc = 'Paste before from system clipboard' })
+
 
 -- Enable break indent
 vim.opt.breakindent = true
@@ -170,6 +186,11 @@ vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+
+
+-- vim.api.nvim_set_hl(0, 'DiagnosticError', { fg = '#ffffff', bg = '#5a0000' })
+-- vim.api.nvim_set_hl(0, 'DiagnosticUnderlineError', { bg = '#3d0000', undercurl = true, sp = '#ff0000' })
+
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which

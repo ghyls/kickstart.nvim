@@ -12,6 +12,7 @@ return {
         cpp = { 'clang-format' },
         cmake = { 'gersemi' },
         markdown = { 'mdsf' },
+        xml = { 'xmlformatter' },
       },
 
     }
