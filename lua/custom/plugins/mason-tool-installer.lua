@@ -11,6 +11,7 @@ return
           "stylua",
           "gersemi",
           "cmakelint",
+          "beautysh",
         },
       })
     end,

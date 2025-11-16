@@ -13,6 +13,7 @@ return {
         cmake = { 'gersemi' },
         markdown = { 'mdsf' },
         xml = { 'xmlformatter' },
+        sh = { 'beautysh' },
       },
 
     }
