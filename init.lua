@@ -110,7 +110,7 @@ vim.opt.mouse = 'a'
 vim.opt.showmode = false
 
 
-vim.opt.textwidth = 82
+vim.opt.textwidth = 78
 
 
 
