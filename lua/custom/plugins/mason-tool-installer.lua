@@ -12,6 +12,7 @@ return
           "gersemi",
           "cmakelint",
           "beautysh",
+          "ruff",
         },
       })
     end,
