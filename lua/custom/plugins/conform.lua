@@ -6,10 +6,18 @@ return {
   },
   config = function()
     local conform = require 'conform'
+    local home = os.getenv('HOME')
 
     conform.setup {
+      formatters = {
+        clang_format_cmssw = {
+          command = home .. '/scripts/clang-format-cmssw-wrapper.sh',
+          stdin = true,
+          timeout_ms = 5000,
+        },
+      },
       formatters_by_ft = {
-        cpp = { 'clang-format' },
+        cpp = { 'clang_format_cmssw' },
         cmake = { 'gersemi' },
         markdown = { 'mdsf' },
         xml = { 'xmlformatter' },
@@ -21,7 +29,7 @@ return {
       conform.format({
         lsp_fallback = true,
         async = false,
-        timeout_ms = 1000,
+        timeout_ms = 5000,
       })
     end, { desc = "[F]ormat file or range" })
   end,
