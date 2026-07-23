@@ -26,6 +26,17 @@ return {
       -- See the full "keymap" documentation for information on defining your own keymap.
       keymap = { preset = 'default' },
 
+      completion = {
+        menu = {
+          -- Don't pop the menu up on every keystroke in prose filetypes
+          -- (e.g. markdown) — trigger it manually with C-space there instead.
+          -- Code filetypes keep the normal auto-popup-while-typing behavior.
+          auto_show = function(ctx)
+            return vim.bo[ctx.bufnr].filetype ~= 'markdown'
+          end,
+        },
+      },
+
       appearance = {
         -- Sets the fallback highlight groups to nvim-cmp's highlight groups
         -- Useful for when your theme doesn't support blink.cmp
