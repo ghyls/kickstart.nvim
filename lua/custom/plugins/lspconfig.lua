@@ -14,7 +14,7 @@ return {
 
 
       vim.lsp.config.clangd = {
-        cmd = { "/cmsnfshome0/nfshome0/mariogo/scripts/clang-cmssw-wrapper.sh" },
+        cmd = { "clangd" },
         root_markers = { '.clangd', '.clang-tidy', '.clang-format', 'compile_commands.json', 'compile_flags.txt', 'configure.ac', '.git' },
         on_attach = function(client, bufnr)
           print("Clangd attached to buffer " .. bufnr)
@@ -176,8 +176,9 @@ return {
       -- If add new server, will be automatically installed
       local servers = {
         clangd = {},
+        ruff = {}, -- Python: syntax errors, lint diagnostics (installed via mason-tool-installer)
         -- gopls = {},
-        -- :pyright = {},
+        -- pyright = {}, -- add for Python type-checking on top of ruff, if desired
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --

@@ -6,24 +6,17 @@ return {
   },
   config = function()
     local conform = require 'conform'
-    local home = os.getenv('HOME')
 
     conform.setup {
-      formatters = {
-        clang_format_cmssw = {
-          command = home .. '/scripts/clang-format-cmssw-wrapper.sh',
-          stdin = true,
-          timeout_ms = 5000,
-        },
-      },
       formatters_by_ft = {
-        cpp = { 'clang_format_cmssw' },
+        cpp = { 'clang-format' },
+        c = { 'clang-format' },
         cmake = { 'gersemi' },
         markdown = { 'mdsf' },
         xml = { 'xmlformatter' },
         sh = { 'beautysh' },
+        python = { 'ruff_format' },
       },
-
     }
     vim.keymap.set({ "n", "v" }, "<leader>mp", function()
       conform.format({
