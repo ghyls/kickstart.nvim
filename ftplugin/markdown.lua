@@ -1,5 +1,10 @@
 vim.bo.formatexpr = "v:lua.require'custom.markdown_format'.formatexpr()"
 
+-- Underline words not in the dictionary (see SpellBad highlight group).
+-- Toggle with <leader>ts (mapped globally in init.lua).
+vim.wo.spell = true
+vim.bo.spelllang = 'en_us'
+
 -- "gw" ignores 'formatexpr' (it always uses Vim's plain internal
 -- formatter), so it needs its own operator mapping to get the same
 -- code-block-aware behavior as "gq".

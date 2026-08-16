@@ -192,6 +192,12 @@ vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
+-- Toggle spell checking (words not in the dictionary get underlined).
+vim.keymap.set('n', '<leader>ts', function()
+  vim.wo.spell = not vim.wo.spell
+  vim.notify('Spell check ' .. (vim.wo.spell and 'on' or 'off'))
+end, { desc = '[T]oggle [S]pell check' })
+
 
 -- vim.api.nvim_set_hl(0, 'DiagnosticError', { fg = '#ffffff', bg = '#5a0000' })
 -- vim.api.nvim_set_hl(0, 'DiagnosticUnderlineError', { bg = '#3d0000', undercurl = true, sp = '#ff0000' })
@@ -222,6 +228,11 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 
 -- Map jk to esc
 vim.keymap.set('i', 'jk', '<Esc>')
+
+-- Work around a Neovim 0.12 / nvim-treesitter incompatibility that crashes
+-- on every markdown buffer with a fenced code block. See the module for
+-- details and upstream issue links.
+require('custom.treesitter_compat').apply()
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
