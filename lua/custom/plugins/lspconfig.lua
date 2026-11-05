@@ -14,7 +14,15 @@ return {
 
 
       vim.lsp.config.clangd = {
-        cmd = { "clangd" },
+        -- Pin the system clangd: after `cmsenv`, a bare "clangd" resolves to the
+        -- CMSSW llvm external on cvmfs, which is built against a newer libstdc++
+        -- than this host has and fails to start.
+        cmd = { "/usr/bin/clangd" },
+        -- `cmsenv` also prepends CMSSW's own libstdc++ to LD_LIBRARY_PATH, which
+        -- the pinned system clangd then picks up instead of the system one it
+        -- was built against, crashing with a symbol lookup error. Clear it so
+        -- clangd falls back to the default system library search path.
+        cmd_env = { LD_LIBRARY_PATH = '' },
         root_markers = { '.clangd', '.clang-tidy', '.clang-format', 'compile_commands.json', 'compile_flags.txt', 'configure.ac', '.git' },
         on_attach = function(client, bufnr)
           print("Clangd attached to buffer " .. bufnr)

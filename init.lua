@@ -369,6 +369,7 @@ require('lazy').setup({
         { '<leader>w', group = '[W]orkspace' },
         { '<leader>t', group = '[T]oggle' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
+        { '<leader>g', group = '[G]it review' },
       },
     },
   },
@@ -603,28 +604,115 @@ require('lazy').setup({
   },
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
+    -- The `main` branch is a full rewrite with no `nvim-treesitter.configs`
+    -- module: parsers are installed through `install()` and the features
+    -- themselves are Neovim's, enabled per buffer (see the FileType
+    -- autocommand below) rather than through one `opts` table.
+    branch = 'main',
+    -- Parsers are pinned to a plugin revision, so they have to be rebuilt
+    -- whenever the plugin itself updates.
     build = ':TSUpdate',
-    main = 'nvim-treesitter.configs', -- Sets main module to use for opts
+    -- `main` does not support lazy-loading.
+    lazy = false,
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
-    opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
-      -- Autoinstall languages that are not installed
-      auto_install = true,
-      highlight = {
-        enable = true,
-        -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
-        --  If you are experiencing weird indenting issues, add the language to
-        --  the list of additional_vim_regex_highlighting and disabled languages for indent.
-        additional_vim_regex_highlighting = { 'ruby' },
-      },
+    config = function()
+      local treesitter = require 'nvim-treesitter'
+      treesitter.setup()
+
+      -- Asynchronous, and a no-op for parsers that are already installed.
+      treesitter.install {
+        'bash',
+        'c',
+        'diff',
+        'html',
+        'lua',
+        'luadoc',
+        'markdown',
+        'markdown_inline',
+        'query',
+        'vim',
+        'vimdoc',
+      }
+
+      -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
+      --  If you are experiencing weird indenting issues, add the language to
+      --  the list of additional_vim_regex_highlighting and disabled languages for indent.
+      local additional_vim_regex_highlighting = { ruby = true }
       -- markdown disabled: treesitter's indentexpr overrides gq/gw's list-continuation
       -- indent (formatlistpat), stripping the "  " hanging indent on wrapped "- " lines.
-      indent = { enable = true, disable = { 'ruby', 'markdown' } },
-    },
+      local indent_disabled = { ruby = true, markdown = true }
+
+      ---Turn on the features that the old `highlight` and `indent` modules used
+      ---to enable globally.
+      ---@param buf integer
+      ---@param lang string
+      local function start(buf, lang)
+        if not vim.api.nvim_buf_is_valid(buf) then
+          return
+        end
+        -- A missing or ABI-incompatible parser makes `start` throw; that should
+        -- not abort loading the buffer.
+        if not pcall(vim.treesitter.start, buf, lang) then
+          return
+        end
+        if additional_vim_regex_highlighting[lang] then
+          vim.bo[buf].syntax = 'on'
+        end
+        if not indent_disabled[lang] then
+          vim.bo[buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+        end
+      end
+
+      ---@param list string[]
+      ---@return table<string, true>
+      local function set(list)
+        local result = {}
+        for _, item in ipairs(list) do
+          result[item] = true
+        end
+        return result
+      end
+
+      -- Both scan the filesystem, so they are built once and kept up to date by
+      -- hand rather than re-read on every FileType.
+      local installed ---@type table<string, true>?
+      local available ---@type table<string, true>?
+
+      vim.api.nvim_create_autocmd('FileType', {
+        group = vim.api.nvim_create_augroup('kickstart-treesitter-start', { clear = true }),
+        callback = function(args)
+          local lang = vim.treesitter.language.get_lang(vim.bo[args.buf].filetype)
+          if not lang then
+            return
+          end
+
+          installed = installed or set(treesitter.get_installed 'parsers')
+          if installed[lang] then
+            start(args.buf, lang)
+            return
+          end
+
+          -- Replaces the old `auto_install`: fetch a supported-but-missing
+          -- parser in the background, then highlight once it has landed.
+          available = available or set(treesitter.get_available())
+          if not available[lang] then
+            return
+          end
+          treesitter.install(lang):await(function(err)
+            if err then
+              return
+            end
+            installed[lang] = true
+            vim.schedule(function()
+              start(args.buf, lang)
+            end)
+          end)
+        end,
+      })
+    end,
     -- There are additional nvim-treesitter modules that you can use to interact
     -- with nvim-treesitter. You should go explore a few and see what interests you:
     --
-    --    - Incremental selection: Included, see `:help nvim-treesitter-incremental-selection-mod`
     --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
     --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
   },
@@ -667,6 +755,10 @@ require('lazy').setup({
   -- In normal mode type `<space>sh` then write `lazy.nvim-plugin`
   -- you can continue same window with `<space>sr` which resumes last telescope search
 }, {
+  -- On EOS (FUSE), git clones are ~10x slower: limit parallel clones and
+  -- allow more time before lazy.nvim kills a git process.
+  concurrency = vim.fn.stdpath('data'):find '^/eos/' and 4 or nil,
+  git = { timeout = vim.fn.stdpath('data'):find '^/eos/' and 900 or 120 },
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
     -- default lazy.nvim defined Nerd Font icons, otherwise define a unicode icons table
