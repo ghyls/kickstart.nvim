@@ -625,6 +625,7 @@ require('lazy').setup({
         'c',
         'diff',
         'html',
+        'latex',
         'lua',
         'luadoc',
         'markdown',
